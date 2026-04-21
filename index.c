@@ -137,8 +137,33 @@ int index_status(const Index *index) {
 int index_load(Index *index) {
     // TODO: Implement index loading
     // (See Lab Appendix for logical steps)
-    (void)index;
-    return -1;
+    FILE *f = fopen(".pes/index", "r");
+
+    index->count = 0;
+
+    if (!f) return 0;
+
+    while (1) {
+        IndexEntry *e = &index->entries[index->count];
+
+        char hash_hex[65];
+
+        int ret = fscanf(f, "%o %64s %ld %ld %[^\n]\n",
+                         &e->mode,
+                         hash_hex,
+                         &e->mtime_sec,
+                         &e->size,
+                         e->path);
+
+        if (ret != 5) break;
+
+        hex_to_hash(hash_hex, &e->hash);
+
+        index->count++;
+    }
+
+    fclose(f);
+    return 0; 
 }
 
 // Save the index to .pes/index atomically.
