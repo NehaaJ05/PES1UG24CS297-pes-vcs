@@ -262,3 +262,4 @@ return 0;
     return -1;
 }
 // minor fix
+// edge case handled
